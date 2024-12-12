@@ -8,6 +8,11 @@
 
 #include "getopt_loop.h"
 
+#define OPTIONAL_ARGUMENT_IS_PRESENT                                          \
+  ((optarg == NULL && optind < argc && argv[optind][0] != '-')                \
+       ? (bool)(optarg = argv[optind++])                                      \
+       : (optarg != NULL))
+
 void
 getopt_loop (int argc, char *argv[], const char *short_options,
              const struct option *long_options,
@@ -33,7 +38,7 @@ getopt_loop (int argc, char *argv[], const char *short_options,
           {
             is_client = true;
             open_flag = O_RDONLY;
-            state = STATE_SENDING_PACKET_COUNT;
+            state = STATE_SEND_PACKET_COUNT;
             break;
           }
         case 's':
@@ -44,48 +49,69 @@ getopt_loop (int argc, char *argv[], const char *short_options,
             break;
           }
           {
-            void *addr_real_addr = NULL;
+            void *real_remote_sockaddr = NULL;
+            void *real_remote_sockaddr_addr = NULL;
+            struct sockaddr_in remote_addr_in;
+            struct sockaddr_in6 remote_addr_in6;
           case '4':
             if (opt == '4')
               {
+                socket_family = AF_INET;
+                remote_socklen = sizeof (struct sockaddr_in);
+
                 if (is_client)
                   {
                     remote_addr_in.sin_family = AF_INET;
                     remote_addr_in.sin_port = htons (remote_port);
-                    remote_socklen = sizeof (struct sockaddr_in);
-                    remote_addr = (struct sockaddr_storage *)&addr_in;
 
-                    addr_real_addr = &remote_addr_in.sin_addr;
+                    real_remote_sockaddr = &remote_addr_in;
+                    real_remote_sockaddr_addr = &remote_addr_in.sin_addr;
                   }
 
-                init_sockaddr_storage_in (&addr, &socklen, &addr_in, port);
+                init_sockaddr_storage_in (&addr, &socklen, port);
               }
           case '6':
             if (opt == '6')
               {
+                socket_family = AF_INET6;
+                remote_socklen = sizeof (struct sockaddr_in6);
+
                 if (is_client)
                   {
                     remote_addr_in6.sin6_family = AF_INET6;
                     remote_addr_in6.sin6_port = htons (remote_port);
-                    remote_socklen = sizeof (struct sockaddr_in6);
-                    remote_addr = (struct sockaddr_storage *)&addr_in6;
 
-                    addr_real_addr = &remote_addr_in6.sin6_addr;
+                    real_remote_sockaddr = &remote_addr_in6;
+                    real_remote_sockaddr_addr = &remote_addr_in6.sin6_addr;
                   }
 
-                init_sockaddr_storage_in6 (&addr, &socklen, &addr_in6, port);
+                init_sockaddr_storage_in6 (&addr, &socklen, port);
               }
 
             if (is_client)
               {
-                if (inet_pton (socket_family, optarg, addr_real_addr) != 1)
+                if (OPTIONAL_ARGUMENT_IS_PRESENT)
                   {
-                    error_exit ("cannot convert a '%s' address passed with "
-                                "option '%s' from"
-                                "text to binary form\n",
-                                optarg, long_options[long_opt_idx].name);
+
+                    if (inet_pton (socket_family, optarg,
+                                   real_remote_sockaddr_addr)
+                        != 1)
+                      {
+                        error_exit (
+                            "cannot convert a '%s' address passed with "
+                            "option '%s' from"
+                            "text to binary form\n",
+                            optarg, long_options[long_opt_idx].name);
+                      }
+                    memcpy (&remote_addr, real_remote_sockaddr, socklen);
+                  }
+                else
+                  {
+                    error_exit ("-4 or -6 option requires a argument"
+                                "when the program is running as a client");
                   }
               }
+            break;
           }
         case 'p':
           {
@@ -122,7 +148,7 @@ getopt_loop (int argc, char *argv[], const char *short_options,
           if (!required_option_presence[i])
             {
               // each character in required_options[i] is a short option
-              error_exit ("missing required option: %s", required_options[i]);
+              error_exit ("missing required option: -%s", required_options[i]);
             }
         }
     }

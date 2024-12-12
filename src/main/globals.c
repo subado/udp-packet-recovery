@@ -17,15 +17,19 @@ uint8_t file_buf[FILE_BUF_SIZE];
 // the number of bytes with which an io operation was performed
 ssize_t received_n_bytes, sent_n_bytes;
 
+// buffers for last received and sent packets
+uint8_t received_buf[PACKET_SIZE], buf_to_send[PACKET_SIZE];
 // last received and sent packets
 struct packet_t received_packet, packet_to_send;
 
 // the index is packet_num
-// true indicated that the packet was processed
-bool received_packet_presence[PACKET_DATA_IN_FILE_BUF_COUNT + 1];
+// true indicate that the packet was  received
+bool received_packet_presence[RECEIVED_PACKET_PRESENCE_SIZE];
 
-// a number of packets to be processed
-PACKET_NUM_TYPE pending_packets_count,
+// a number of packets that were received
+packet_num_t received_packet_count,
+    // a number of packets to be processed
+    pending_packets_count,
     // an index of file segment
     // the indexing unit is FILE_BUF_SIZE
     file_segment_idx;
@@ -43,12 +47,8 @@ char sockaddr_str[SOCKADDR_STR_LEN];
 // lengths of socket addresses
 socklen_t remote_socklen, socklen;
 
-// pointers to socket addresses
-struct sockaddr_storage *remote_addr, *addr;
-
 // variables in which socket addresses are stored
-struct sockaddr_in remote_addr_in, addr_in;
-struct sockaddr_in6 remote_addr_in6, addr_in6;
+struct sockaddr_storage remote_addr, addr;
 
 // ports of socket addresses
 in_port_t remote_port, port;
@@ -56,9 +56,8 @@ in_port_t remote_port, port;
 // filename of file used as input or output
 const char *filename;
 
+bool changing_remote_state;
 // current state of a socket endpoint
-state_t state,
-    // desired next state of a socket endpoint
-    next_state,
+packet_state_t state,
     // desired state of a remote socket endpoint
     desired_remote_state;

@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -10,32 +11,35 @@
 #include "str2decimal.h"
 
 void
-init_sockaddr_storage_in (struct sockaddr_storage **addr, socklen_t *socklen,
-                          struct sockaddr_in *addr_in, in_port_t port)
+init_sockaddr_storage_in (struct sockaddr_storage *addr, socklen_t *socklen,
+                          in_port_t port)
 {
+  struct sockaddr_in addr_in;
   struct in_addr sin_addr = { .s_addr = INADDR_ANY };
-  addr_in->sin_family = AF_INET;
-  addr_in->sin_port = htons (port);
-  addr_in->sin_addr = sin_addr;
+  addr_in.sin_family = AF_INET;
+  addr_in.sin_port = htons (port);
+  addr_in.sin_addr = sin_addr;
   (*socklen) = sizeof (struct sockaddr_in);
-  (*addr) = (struct sockaddr_storage *)addr_in;
+  memcpy (addr, &addr_in, *socklen);
 }
 
 void
-init_sockaddr_storage_in6 (struct sockaddr_storage **addr, socklen_t *socklen,
-                           struct sockaddr_in6 *addr_in6, in_port_t port)
+init_sockaddr_storage_in6 (struct sockaddr_storage *addr, socklen_t *socklen,
+                           in_port_t port)
 {
-  addr_in6->sin6_family = AF_INET6;
-  addr_in6->sin6_port = htons (port);
-  addr_in6->sin6_addr = in6addr_any;
+  struct sockaddr_in6 addr_in6;
+  addr_in6.sin6_family = AF_INET6;
+  addr_in6.sin6_port = htons (port);
+  addr_in6.sin6_addr = in6addr_any;
   (*socklen) = sizeof (struct sockaddr_in6);
-  (*addr) = (struct sockaddr_storage *)addr_in6;
+
+  memcpy (addr, &addr_in6, *socklen);
 }
 
 void
-str2port (const char *s, in_port_t *port)
+str2port (const char *s, in_port_t *p)
 {
-  if ((errno = str2short_range (port, s, 10, 1)) != 0)
+  if ((errno = str2short_range (p, s, 10, 1)) != 0)
     {
       error_exit ("%s is not a valid server port number\n", s);
     }

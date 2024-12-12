@@ -13,16 +13,20 @@
 #include "globals.h"
 #include "init_globals.h"
 #include "log.h"
-#include "receive_handler.h"
-#include "send_loop.h"
+#include "receive_handlers/receive_signal_handler.h"
+#include "send_handlers/send_handlers_loop.h"
 #include "socket_helpers.h"
 
 int
 main (int argc, char *argv[])
 {
+#ifdef DEBUG
+  setbuf (stdout, NULL);
+#endif
+
   init_globals ();
 
-  const char *short_options = "cs4:6:p:r:f:";
+  const char *short_options = "cs4::6::p:r:f:";
   const struct option long_options[]
       = { { "client", no_argument, 0, 'c' },
           { "server", no_argument, 0, 's' },
@@ -38,18 +42,18 @@ main (int argc, char *argv[])
                sizeof (required_options) / sizeof (required_options[0]),
                required_options);
 
-  sfd = create_binded_socket (socket_family, addr, socklen);
+  sfd = create_binded_socket (socket_family, &addr, socklen);
   printf ("socket is ready\n");
   printf ("socket is binded to port %d\n", port);
 
-  signal (SIGIO, receive_handler);
+  signal (SIGIO, receive_signal_handler);
 
   make_socket_async (sfd);
 
   fd = open (filename, open_flag);
   if (fd == -1)
     perror_exit ("cannot open an file");
-  printf ("input file is opened\n");
+  printf ("file[%s] is opened\n", filename);
 
   if (is_client)
     {
@@ -62,7 +66,7 @@ main (int argc, char *argv[])
       printf ("file size: %ld\n", file_remaining_size);
     }
 
-  send_loop ();
+  send_handlers_loop ();
 
   close (sfd);
   printf ("socket is closed\n");

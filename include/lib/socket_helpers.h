@@ -3,12 +3,10 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-void init_sockaddr_storage_in (struct sockaddr_storage **addr,
-                               socklen_t *socklen, struct sockaddr_in *addr_in,
-                               in_port_t port);
-void init_sockaddr_storage_in6 (struct sockaddr_storage **addr,
-                                socklen_t *socklen,
-                                struct sockaddr_in6 *addr_in6, in_port_t port);
+void init_sockaddr_storage_in (struct sockaddr_storage *addr,
+                               socklen_t *socklen, in_port_t port);
+void init_sockaddr_storage_in6 (struct sockaddr_storage *addr,
+                                socklen_t *socklen, in_port_t port);
 
 void str2port (const char *s, in_port_t *port);
 
