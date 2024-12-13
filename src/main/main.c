@@ -54,7 +54,7 @@ main (int argc, char *argv[])
 
   make_socket_async (sfd);
 
-  fd = open (filename, open_flag);
+  fd = open (filename, open_flag, S_IRUSR | S_IWUSR);
   if (fd == -1)
     perror_exit ("cannot open an file");
   printf ("file[%s] is opened\n", filename);
