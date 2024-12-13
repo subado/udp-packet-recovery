@@ -1,9 +1,9 @@
-#include "bytes2decimal.h"
+#include "utils/bytes2decimal.h"
 
 void
 bytes2decimal (uintmax_t *x, const uint8_t *bytes, size_t n)
 {
-  return bytes2decimal_from (x, bytes, n, 0);
+  bytes2decimal_from (x, bytes, n, 0);
 }
 
 void

@@ -3,7 +3,8 @@
 #include "config.h"
 #include "globals.h"
 
-bool is_client; /* a flag indicating that the program is running as a client */
+bool is_client, /* a flag indicating that the program is running as a client */
+    verbose, measure_avg_speed;
 
 int sfd, fd,   /* socket and file descriptors */
     open_flag; /* flag for the open() */
@@ -29,7 +30,8 @@ packet_num_t
     file_segment_idx;      /* an index of file segment the indexing unit is
                               FILE_BUF_SIZE */
 
-long pending_packets_size, file_remaining_size;
+uint64_t pending_packets_size, file_remaining_size, n_skip_packets,
+    skip_packets_rate, last_skipped_packet;
 
 struct timespec req, rem; /* arguments for nanosleep */
 

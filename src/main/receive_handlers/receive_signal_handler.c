@@ -5,8 +5,8 @@
 
 #include "config.h"
 #include "globals.h"
-#include "log.h"
-#include "packet_helpers.h"
+#include "utils/log.h"
+#include "utils/packet_helpers.h"
 
 #include "receive_handlers/recv_receive_lost_packet_nums.h"
 #include "receive_handlers/recv_receive_packet_count.h"
@@ -40,10 +40,10 @@ receive_signal_handler (int signal)
                       if (sock_err->ee_origin == SO_EE_ORIGIN_ICMP
                           && sock_err->ee_type == ICMP_DEST_UNREACH)
                         {
-#ifdef DEBUG
-                          printf (
+
+                          print_verbose (
                               "ICMP destination unreachable error received\n");
-#endif
+
                           changing_remote_state = false;
                           desired_remote_state = state = STATE_COMPLETE;
                         }

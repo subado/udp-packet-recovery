@@ -4,8 +4,9 @@
 
 #include "globals.h"
 #include "init_globals.h"
-#include "log.h"
-#include "socket_helpers.h"
+#include "utils/log.h"
+#include "utils/socket_helpers.h"
+#include "utils/str2decimal.h"
 
 #include "getopt_loop.h"
 
@@ -18,7 +19,7 @@ void
 getopt_loop (int argc, char *argv[], const char *short_options,
              const struct option *long_options,
              const size_t required_options_size,
-             const char *required_options[])
+             const char *required_options[required_options_size])
 {
   size_t required_options_count = 0;
   bool required_option_presence[required_options_size];
@@ -129,6 +130,21 @@ getopt_loop (int argc, char *argv[], const char *short_options,
         case 'f':
           {
             filename = (const char *)optarg;
+            break;
+          }
+        case 'v':
+          {
+            verbose = true;
+            break;
+          }
+        case 'm':
+          {
+            measure_avg_speed = true;
+            break;
+          }
+        case 'n':
+          {
+            str2long (&n_skip_packets, optarg, 10);
             break;
           }
         case ':':

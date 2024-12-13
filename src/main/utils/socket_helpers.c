@@ -6,9 +6,9 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "log.h"
-#include "socket_helpers.h"
-#include "str2decimal.h"
+#include "utils/log.h"
+#include "utils/socket_helpers.h"
+#include "utils/str2decimal.h"
 
 void
 init_sockaddr_storage_in (struct sockaddr_storage *addr, socklen_t *socklen,

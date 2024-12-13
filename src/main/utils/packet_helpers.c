@@ -1,8 +1,8 @@
-#include "bytes2decimal.h"
 #include "globals.h"
+#include "utils/bytes2decimal.h"
 #include <string.h>
 
-#include "packet_helpers.h"
+#include "utils/packet_helpers.h"
 
 void
 read_file_cache (struct packet_t *packet, const uint8_t *file_cache)

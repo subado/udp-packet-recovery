@@ -5,7 +5,7 @@
 
 #include "config.h"
 
-extern bool is_client;
+extern bool is_client, verbose, measure_avg_speed;
 
 extern int sfd, fd, open_flag;
 
@@ -20,7 +20,8 @@ extern bool received_packet_presence[RECEIVED_PACKET_PRESENCE_SIZE];
 
 extern packet_num_t received_packet_count, pending_packets_count,
     file_segment_idx;
-extern long pending_packets_size, file_remaining_size;
+extern uint64_t pending_packets_size, file_remaining_size, n_skip_packets,
+    skip_packets_rate, last_skipped_packet;
 
 extern struct timespec req, rem;
 

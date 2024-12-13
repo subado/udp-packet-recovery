@@ -2,7 +2,7 @@
 #include <errno.h>
 #include <inttypes.h>
 
-#include "str2decimal.h"
+#include "utils/str2decimal.h"
 
 int
 str2long (uint64_t *out, const char *s, int base)
@@ -46,7 +46,7 @@ str2short_range (uint16_t *out, const char *s, int base, uint16_t min_value)
 int
 str2decimal (uintmax_t *out, const char *s, int base, size_t size)
 {
-  return str2decimal_range (out, s, base, 0, UINTMAX_MAX, sizeof (uintmax_t));
+  return str2decimal_range (out, s, base, 0, UINTMAX_MAX, size);
 }
 
 int
@@ -61,9 +61,9 @@ str2decimal_range (uintmax_t *out, const char *s, int base,
     }
   else
     {
-      long l = strtoumax (s, &end, base);
+      uintmax_t x = strtoumax (s, &end, base);
 
-      if (l > max_value || l < min_value)
+      if (x > max_value || x < min_value)
         {
           errno = ERANGE;
         }
@@ -71,9 +71,10 @@ str2decimal_range (uintmax_t *out, const char *s, int base,
         {
           errno = EINVAL;
         }
+
       for (size_t i = 0; i < size; ++i)
         {
-          *(((uint8_t *)out) + i) = (l >> (i * sizeof (uint8_t) * 8)) & 0xff;
+          *(((uint8_t *)out) + i) = (x >> (i * sizeof (uint8_t) * 8)) & 0xff;
         }
     }
 

@@ -1,8 +1,7 @@
-#include <stdio.h>
-
-#include "bytes2decimal.h"
-#include "file_helpers.h"
 #include "globals.h"
+#include "utils/bytes2decimal.h"
+#include "utils/file_helpers.h"
+#include "utils/log.h"
 
 #include "packet_preparators/prepare_send_packet_count_packet.h"
 
@@ -26,10 +25,9 @@ prepare_send_packet_count_packet ()
 
       cache_file_segment (fd, FILE_BUF_SIZE * file_segment_idx, file_buf,
                           pending_packets_size);
-#ifdef DEBUG
-      printf ("sending file segment[%d] is started\n", file_segment_idx);
-      printf ("sending packet count[%d]\n", pending_packets_count);
-#endif
+      print_verbose ("sending file segment[%d] is started\n"
+                     "sending packet count[%d]\n",
+                     file_segment_idx, pending_packets_count);
     }
   else
     {

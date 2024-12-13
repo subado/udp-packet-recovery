@@ -1,8 +1,7 @@
-#include <stdio.h>
-
-#include "file_helpers.h"
 #include "globals.h"
 #include "receive_handlers/recv_receive_packets.h"
+#include "utils/file_helpers.h"
+#include "utils/log.h"
 
 #include "receive_handlers/recv_send_lost_packet_nums.h"
 
@@ -24,9 +23,7 @@ recv_send_lost_packet_nums ()
       flush_file_buf (fd, file_segment_idx * FILE_BUF_SIZE, file_buf,
                       pending_packets_size);
 
-#ifdef DEBUG
-      printf ("all lost packets were recovered\n");
-#endif
+      print_verbose ("all lost packets were recovered\n");
 
       ++file_segment_idx;
     }

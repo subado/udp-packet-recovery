@@ -7,7 +7,9 @@
 void
 init_globals ()
 {
+  measure_avg_speed = verbose = false;
   changing_remote_state = false;
+  last_skipped_packet = n_skip_packets = 0;
 
   state = STATE_UNSPEC;
 
@@ -16,8 +18,10 @@ init_globals ()
   memset (&addr, 0, sizeof (addr));
   memset (&remote_addr, 0, sizeof (remote_addr));
 
-  memset (&received_buf, 0, PACKET_SIZE);
-  memset (&buf_to_send, 0, PACKET_SIZE);
+  memset (&icmp_msg_buf, 0, sizeof (icmp_msg_buf));
+
+  memset (&received_buf, 0, sizeof (received_buf));
+  memset (&buf_to_send, 0, sizeof (buf_to_send));
 
   memset (&received_packet, 0, sizeof (received_packet));
   memset (&packet_to_send, 0, sizeof (packet_to_send));
