@@ -1,5 +1,6 @@
 #pragma once
 
+#include <linux/icmp.h>
 #include <stdbool.h>
 
 #include "config.h"
@@ -38,3 +39,7 @@ extern const char *filename;
 
 extern bool changing_remote_state;
 extern packet_state_t state, desired_remote_state;
+
+extern struct iovec message_header_iov;
+extern struct msghdr message_header;
+extern struct icmphdr icmp_header;

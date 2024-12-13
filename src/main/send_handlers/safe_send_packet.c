@@ -8,10 +8,12 @@
 void
 safe_send_packet ()
 {
-  while ((sent_n_bytes = sendto (
-              sfd, &buf_to_send, PACKET_HEADER_SIZE + packet_to_send.size, 0,
-              (struct sockaddr *)&remote_addr, remote_socklen))
-         == -1)
+  for (size_t retries = 0;
+       ((sent_n_bytes = send (sfd, &buf_to_send,
+                              PACKET_HEADER_SIZE + packet_to_send.size, 0))
+        == -1)
+       && retries < MAX_RETRIES;
+       ++retries)
     {
       nanosleep (&req, &rem);
     }

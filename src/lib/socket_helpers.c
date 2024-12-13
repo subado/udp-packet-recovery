@@ -103,7 +103,7 @@ int
 create_binded_socket (int socket_family, const struct sockaddr_storage *addr,
                       socklen_t socklen)
 {
-  int sfd = socket (socket_family, SOCK_DGRAM, 0);
+  int sfd = socket (socket_family, SOCK_DGRAM, IPPROTO_UDP);
   if (sfd == -1)
     perror_exit ("cannot create an endpoint for communication");
 

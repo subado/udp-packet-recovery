@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "globals.h"
+#include "init_globals.h"
 #include "log.h"
 #include "socket_helpers.h"
 
@@ -111,6 +112,8 @@ getopt_loop (int argc, char *argv[], const char *short_options,
                                 "when the program is running as a client");
                   }
               }
+
+            init_message_header ();
             break;
           }
         case 'p':

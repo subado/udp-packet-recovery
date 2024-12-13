@@ -20,7 +20,6 @@ send_send_packets ()
   printf ("packet[%d] was sent\n", packet_to_send.packet_num);
 #endif
 
-  ++packet_to_send.packet_num;
   --pending_packets_count;
 
   if (pending_packets_count == 0)
@@ -34,5 +33,9 @@ send_send_packets ()
               file_segment_idx);
 #endif
       ++file_segment_idx;
+    }
+  else
+    {
+      ++packet_to_send.packet_num;
     }
 }

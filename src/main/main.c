@@ -46,6 +46,10 @@ main (int argc, char *argv[])
   printf ("socket is ready\n");
   printf ("socket is binded to port %d\n", port);
 
+  bool ip_recverr_sockopt = true;
+  setsockopt (sfd, IPPROTO_IP, IP_RECVERR, &ip_recverr_sockopt,
+              sizeof (ip_recverr_sockopt));
+
   signal (SIGIO, receive_signal_handler);
 
   make_socket_async (sfd);
@@ -64,6 +68,13 @@ main (int argc, char *argv[])
         }
       file_remaining_size = fd_stat.st_size;
       printf ("file size: %ld\n", file_remaining_size);
+
+      if ((connect (sfd, (struct sockaddr *)&remote_addr, remote_socklen)
+           == -1))
+        {
+          perror_exit ("cannot connect to remote server socket");
+        }
+      printf ("client is connected to remote server socket\n");
     }
 
   send_handlers_loop ();

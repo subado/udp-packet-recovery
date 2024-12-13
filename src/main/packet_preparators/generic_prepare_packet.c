@@ -42,13 +42,17 @@ generic_prepare_packet ()
     }
 
   if (changing_remote_state
-      && (last_desired_remote_state != desired_remote_state))
+      && (last_desired_remote_state != desired_remote_state
+          || last_state != state))
     {
       packet_to_send.packet_num = 0;
       packet_to_send.size = 1;
       packet_to_send.state_num = desired_remote_state;
-      is_changed = true;
+
       last_desired_remote_state = desired_remote_state;
+      last_state = state;
+
+      is_changed = true;
     }
 
   if (is_changed)

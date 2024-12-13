@@ -26,6 +26,7 @@
 #define MAX(x, y) (x > y) ? x : y
 #define MIN(x, y) (x < y) ? x : y
 
+#define MAX_RETRIES 3
 #define TIMEOUT_NS 100000
 
 struct packet_t

@@ -20,6 +20,14 @@ send_handlers_loop ()
       if (changing_remote_state)
         {
           safe_send_packet ();
+          /* if (received_n_bytes == -1 && (state & STATE_COMPLETE))
+            {
+              break;
+            } */
+        }
+      else if (state == STATE_COMPLETE)
+        {
+          break;
         }
       else
         {

@@ -9,12 +9,11 @@
 void
 recv_send_lost_packet_nums ()
 {
-  if (received_packet.packet_num != packet_to_send.packet_num)
+  if ((received_packet.packet_num == packet_to_send.packet_num)
+      && received_packet.packet_num != 0)
     {
-      return;
+      recv_receive_packets ();
     }
-
-  recv_receive_packets ();
 
   if (received_packet_count == pending_packets_count)
     {
@@ -30,6 +29,5 @@ recv_send_lost_packet_nums ()
 #endif
 
       ++file_segment_idx;
-      return;
     }
 }

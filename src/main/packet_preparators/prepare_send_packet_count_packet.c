@@ -33,8 +33,6 @@ prepare_send_packet_count_packet ()
     }
   else
     {
-      changing_remote_state = true;
-      desired_remote_state = STATE_COMPLETE;
       state = STATE_COMPLETE;
     }
 }
