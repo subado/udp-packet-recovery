@@ -39,6 +39,6 @@ init_message_header ()
   message_header.msg_iov = &message_header_iov;
   message_header.msg_iovlen = 1;
   message_header.msg_flags = 0;
-  message_header.msg_control = received_buf;
-  message_header.msg_controllen = PACKET_SIZE;
+  message_header.msg_control = icmp_msg_buf;
+  message_header.msg_controllen = sizeof (icmp_msg_buf);
 }

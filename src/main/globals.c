@@ -51,6 +51,7 @@ bool changing_remote_state; /*  current state of a socket endpoint */
 packet_state_t state,
     desired_remote_state; /* desired state of a remote socket endpoint */
 
-struct iovec message_header_iov; /* Data array */
-struct msghdr message_header;    /* Message header */
-struct icmphdr icmp_header;      /* ICMP header */
+uint8_t icmp_msg_buf[ICMP_MSG_BUF_SIZE]; // buffer for
+struct iovec message_header_iov;         /* Data array */
+struct msghdr message_header;            /* Message header */
+struct icmphdr icmp_header;              /* ICMP header */

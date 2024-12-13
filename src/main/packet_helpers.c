@@ -7,9 +7,9 @@
 void
 read_file_cache (struct packet_t *packet, const uint8_t *file_cache)
 {
-  packet->size = MIN (PACKET_DATA_SIZE,
-                      pending_packets_size
-                          - packet_to_send.packet_num * PACKET_DATA_SIZE);
+  packet->size = MIN (PACKET_DATA_SIZE, pending_packets_size
+                                            - (packet_to_send.packet_num - 1)
+                                                  * PACKET_DATA_SIZE);
 
   for (size_t i = 0; i < packet->size; ++i)
     {

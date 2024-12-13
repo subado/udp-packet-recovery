@@ -40,6 +40,9 @@ extern const char *filename;
 extern bool changing_remote_state;
 extern packet_state_t state, desired_remote_state;
 
+#define ICMP_MSG_BUF_SIZE                                                     \
+  (sizeof (struct icmphdr) + 576) // 576 is the max ICMP data size
+extern uint8_t icmp_msg_buf[ICMP_MSG_BUF_SIZE];
 extern struct iovec message_header_iov;
 extern struct msghdr message_header;
 extern struct icmphdr icmp_header;
