@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "utils/packet_helpers.h"
+#include "utils/socket_helpers.h"
 
 void
 read_file_cache (struct packet_t *packet, const uint8_t *file_cache)
@@ -28,9 +29,8 @@ write_file_cache (const struct packet_t *packet, uint8_t *file_cache)
     }
 }
 
-static void
-serialize_packet_field (const void *field, uint8_t *buf, size_t size,
-                        size_t *to)
+void
+serialize_decimal (const void *field, uint8_t *buf, size_t size, size_t *to)
 {
   uintmax_t x = *((uintmax_t *)field);
   switch (size)
@@ -45,14 +45,19 @@ serialize_packet_field (const void *field, uint8_t *buf, size_t size,
         x = htonl (x);
         break;
       }
+    case 8:
+      {
+        x = htonll (x);
+        break;
+      }
     }
   decimal2bytes_to (x, buf, size, *to);
   (*to) += size;
 }
 
-static void
-deserialize_packet_field (void *field, const uint8_t *buf, size_t size,
-                          size_t *from)
+void
+deserialize_decimal (void *field, const uint8_t *buf, size_t size,
+                     size_t *from)
 {
   bytes2decimal_from ((uintmax_t *)field, buf, size, *from);
   switch (size)
@@ -67,6 +72,11 @@ deserialize_packet_field (void *field, const uint8_t *buf, size_t size,
         *((uint32_t *)field) = ntohl (*((uint32_t *)field));
         break;
       }
+    case 8:
+      {
+        *((uint64_t *)field) = ntohll (*((uint64_t *)field));
+        break;
+      }
     }
   (*from += size);
 }
@@ -75,10 +85,9 @@ void
 serialize_packet (const struct packet_t *packet, uint8_t *buf)
 {
   size_t i = 0;
-  serialize_packet_field (&packet->packet_num, buf, sizeof (packet_num_t), &i);
-  serialize_packet_field (&packet->size, buf, sizeof (packet_size_t), &i);
-  serialize_packet_field (&packet->state_num, buf, sizeof (packet_state_t),
-                          &i);
+  serialize_decimal (&packet->packet_num, buf, sizeof (packet_num_t), &i);
+  serialize_decimal (&packet->size, buf, sizeof (packet_size_t), &i);
+  serialize_decimal (&packet->state_num, buf, sizeof (packet_state_t), &i);
   memcpy (buf + i, packet->data, packet->size);
 }
 
@@ -86,11 +95,9 @@ void
 deserialize_packet (struct packet_t *packet, const uint8_t *buf)
 {
   size_t i = 0;
-  deserialize_packet_field (&packet->packet_num, buf, sizeof (packet_num_t),
-                            &i);
-  deserialize_packet_field (&packet->size, buf, sizeof (packet_size_t), &i);
-  deserialize_packet_field (&packet->state_num, buf, sizeof (packet_state_t),
-                            &i);
+  deserialize_decimal (&packet->packet_num, buf, sizeof (packet_num_t), &i);
+  deserialize_decimal (&packet->size, buf, sizeof (packet_size_t), &i);
+  deserialize_decimal (&packet->state_num, buf, sizeof (packet_state_t), &i);
 
   memcpy (packet->data, buf + i, packet->size);
 }

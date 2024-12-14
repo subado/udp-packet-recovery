@@ -15,6 +15,6 @@ safe_send_packet ()
        && retries < MAX_RETRIES;
        ++retries)
     {
-      nanosleep (&req, &rem);
+      nanosleep (&timeout, &timeout_rem);
     }
 }

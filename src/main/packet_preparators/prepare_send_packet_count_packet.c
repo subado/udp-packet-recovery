@@ -20,7 +20,7 @@ prepare_send_packet_count_packet ()
       packet_to_send.packet_num = 1;
       packet_to_send.state_num = STATE_RECEIVE_PACKET_COUNT;
       packet_to_send.size = sizeof (pending_packets_count);
-      decimal2bytes (pending_packets_count, packet_to_send.data,
+      decimal2bytes (htonl (pending_packets_count), packet_to_send.data,
                      packet_to_send.size);
 
       cache_file_segment (fd, FILE_BUF_SIZE * file_segment_idx, file_buf,

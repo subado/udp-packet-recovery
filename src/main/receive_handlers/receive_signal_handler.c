@@ -5,6 +5,8 @@
 
 #include "config.h"
 #include "globals.h"
+#include "receive_handlers/recv_receive_timeout.h"
+#include "receive_handlers/recv_send_timeout.h"
 #include "utils/log.h"
 #include "utils/packet_helpers.h"
 
@@ -86,18 +88,30 @@ receive_signal_handler (int signal)
 
       switch (state)
         {
-        case STATE_SEND_LOST_PACKET_NUMS:
-          recv_send_lost_packet_nums ();
+        case STATE_SEND_TIMEOUT:
+          recv_send_timeout ();
           break;
+
         case STATE_RECEIVE_PACKETS:
           recv_receive_packets ();
           break;
+
+        case STATE_SEND_LOST_PACKET_NUMS:
+          recv_send_lost_packet_nums ();
+          break;
+
         case STATE_RECEIVE_LOST_PACKET_NUMS:
           recv_receive_lost_packet_nums ();
           break;
+
         case STATE_RECEIVE_PACKET_COUNT:
           recv_receive_packet_count ();
           break;
+
+        case STATE_RECEIVE_TIMEOUT:
+          recv_receive_timeout ();
+          break;
+
         default:
           break;
         }

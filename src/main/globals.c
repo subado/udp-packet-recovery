@@ -33,7 +33,8 @@ packet_num_t
 uint64_t pending_packets_size, file_remaining_size, n_skip_packets,
     skip_packets_rate, last_skipped_packet;
 
-struct timespec req, rem; /* arguments for nanosleep */
+struct timespec timeout, timeout_rem, /* arguments for nanosleep */
+    start_timespec, end_timespec;
 
 int socket_family; /* a socket communication domain */
 

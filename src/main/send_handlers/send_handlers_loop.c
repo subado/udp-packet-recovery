@@ -7,6 +7,7 @@
 #include "send_handlers/send_send_lost_packet_nums.h"
 #include "send_handlers/send_send_packet_count.h"
 #include "send_handlers/send_send_packets.h"
+#include "send_handlers/send_send_timeout.h"
 
 #include "send_handlers/send_handlers_loop.h"
 
@@ -20,10 +21,6 @@ send_handlers_loop ()
       if (changing_remote_state)
         {
           safe_send_packet ();
-          /* if (received_n_bytes == -1 && (state & STATE_COMPLETE))
-            {
-              break;
-            } */
         }
       else if (state == STATE_COMPLETE)
         {
@@ -33,6 +30,7 @@ send_handlers_loop ()
         {
           switch (state)
             {
+
             case STATE_SEND_PACKETS:
               send_send_packets ();
               break;
@@ -49,10 +47,14 @@ send_handlers_loop ()
               send_send_packet_count ();
               break;
 
+            case STATE_SEND_TIMEOUT:
+              send_send_timeout ();
+              break;
+
             default:
               break;
             }
         }
-      nanosleep (&req, &rem);
+      nanosleep (&timeout, &timeout_rem);
     }
 }

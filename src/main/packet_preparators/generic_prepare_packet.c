@@ -1,6 +1,7 @@
 #include "globals.h"
 #include "packet_preparators/prepare_send_lost_packet_nums_packet.h"
 #include "packet_preparators/prepare_send_packet_count_packet.h"
+#include "packet_preparators/prepare_send_timeout_packet.h"
 #include "utils/packet_helpers.h"
 
 #include "packet_preparators/generic_prepare_packet.h"
@@ -17,22 +18,31 @@ generic_prepare_packet ()
       is_changed = true;
       switch (state)
         {
+        case STATE_SEND_TIMEOUT:
+          prepare_send_timeout_packet ();
+          break;
+
         case STATE_SEND_PACKETS:
           packet_to_send.packet_num = 1;
           packet_to_send.state_num = STATE_RECEIVE_PACKETS;
           break;
+
         case STATE_RECEIVE_PACKETS:
           packet_to_send.packet_num = 1;
           break;
+
         case STATE_SEND_LOST_PACKET_NUMS:
           prepare_send_lost_packet_nums_packet ();
           break;
+
         case STATE_RECEIVE_LOST_PACKET_NUMS:
           packet_to_send.state_num = STATE_SEND_LOST_PACKET_NUMS;
           break;
+
         case STATE_SEND_PACKET_COUNT:
           prepare_send_packet_count_packet ();
           break;
+
         default:
           is_changed = false;
           break;

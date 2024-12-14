@@ -6,7 +6,7 @@
 
 #include "packet_types.h"
 
-#define PACKET_SIZE 512
+#define PACKET_SIZE 512 // to avoid IP fragmentation
 #define PACKET_HEADER_SIZE                                                    \
   (sizeof (packet_num_t) + sizeof (packet_state_t) + sizeof (packet_size_t))
 #define PACKET_DATA_SIZE (PACKET_SIZE - PACKET_HEADER_SIZE)
@@ -27,7 +27,10 @@
 #define MIN(x, y) (x < y) ? x : y
 
 #define MAX_RETRIES 3
-#define TIMEOUT_NS 100000
+
+#define TIMEOUT_DIVISOR 4
+#define DEFAULT_TIMEOUT_SEC 0L
+#define DEFAULT_TIMEOUT_NSEC 50000000L
 
 struct packet_t
 {

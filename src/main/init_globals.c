@@ -11,6 +11,9 @@ init_globals ()
   changing_remote_state = false;
   last_skipped_packet = n_skip_packets = 0;
 
+  timeout.tv_sec = DEFAULT_TIMEOUT_SEC;
+  timeout.tv_nsec = DEFAULT_TIMEOUT_NSEC;
+
   state = STATE_UNSPEC;
 
   socket_family = AF_UNSPEC;

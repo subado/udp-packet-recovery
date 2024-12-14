@@ -23,7 +23,7 @@ extern packet_num_t received_packet_count, pending_packets_count,
 extern uint64_t pending_packets_size, file_remaining_size, n_skip_packets,
     skip_packets_rate, last_skipped_packet;
 
-extern struct timespec req, rem;
+extern struct timespec timeout, timeout_rem, start_timespec, end_timespec;
 
 extern int socket_family;
 

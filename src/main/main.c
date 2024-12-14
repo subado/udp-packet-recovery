@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "getopt_loop.h"
@@ -16,8 +17,8 @@
 #include "receive_handlers/receive_signal_handler.h"
 #include "send_handlers/send_handlers_loop.h"
 #include "utils/log.h"
-#include "utils/nanos.h"
 #include "utils/socket_helpers.h"
+#include "utils/timespec_helpers.h"
 
 void free_resources (int signal);
 
@@ -69,7 +70,7 @@ main (int argc, char *argv[])
   signal (SIGINT, free_resources);
 
   struct stat fd_stat;
-  uintmax_t send_start_time;
+  struct timespec sending_start_timespec;
   if (is_client)
     {
       if (fstat (fd, &fd_stat) == -1)
@@ -88,7 +89,7 @@ main (int argc, char *argv[])
 
       if (measure_avg_speed)
         {
-          send_start_time = get_nanos ();
+          timespec_get (&sending_start_timespec, TIME_UTC);
         }
 
       if (n_skip_packets)
@@ -103,9 +104,11 @@ main (int argc, char *argv[])
 
   if (is_client && measure_avg_speed)
     {
-      long double speed
-          = ((long double)(fd_stat.st_size) / 1024
-             / ((long double)(get_nanos () - send_start_time) / 1000000000UL));
+      struct timespec sending_end_timespec;
+      timespec_get (&sending_end_timespec, TIME_UTC);
+      long double speed = ((long double)(fd_stat.st_size) / 1024
+                           / (diff_timespec (&sending_end_timespec,
+                                             &sending_start_timespec)));
       printf ("average sending speed: %Lf KB/S\n", speed);
     }
 
