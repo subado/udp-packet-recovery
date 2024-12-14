@@ -32,7 +32,7 @@ main (int argc, char *argv[])
 
   init_globals ();
 
-  const char *short_options = "cs4::6::p:r:f:vmn:";
+  const char *short_options = "cs4::6::p:r:f:vmn:h";
   const struct option long_options[]
       = { { "client", no_argument, 0, 'c' },
           { "server", no_argument, 0, 's' },
@@ -42,15 +42,34 @@ main (int argc, char *argv[])
           { "remote_port", required_argument, 0, 'r' },
           { "filename", required_argument, 0, 'f' },
           { "verbose", no_argument, 0, 'v' },
+          { "help", no_argument, 0, 'h' },
           /* client only options */
           { "measure_avg_speed", no_argument, 0, 'm' },
           { "skip_packets", required_argument, 0, 'n' },
           { 0, 0, 0, 0 } };
 
+  const char *help_messages[] = {
+    "run as client (send a file)",                      /* client */
+    "run as server (receive a file)",                   /* server */
+    "use ipv4 for socket addresses\n"                   /* ipv4 */
+    "(client should pass server address as argument)",  /* ipv4 */
+    "use ipv6 for socket addresses\n"                   /* ipv6 */
+    "(client should pass server address as argument)",  /* ipv6 */
+    "port to bind on the local socket",                 /* port */
+    "port to connect on the remote host",               /* remote_port */
+    "filename of an input file (client) or\n"           /* filename */
+    "an output file (server)",                          /* filename */
+    "explain what is being done",                       /* verbose */
+    "display this help and exit",                       /* help */
+    "(client only) measure the average sending speed\n" /* measure_avg_speed */
+    "print it after sending a file is completed",       /* measure_avg_speed */
+    "(client only) skip random {arg} packets",          /* skip_packets */
+  };
+
   const char *required_options[] = { "cs", "46", "f" };
   getopt_loop (argc, argv, short_options, long_options,
                sizeof (required_options) / sizeof (required_options[0]),
-               required_options);
+               required_options, help_messages);
 
   sfd = create_binded_socket (socket_family, &addr, socklen);
   printf ("socket is binded to port %d\n", port);

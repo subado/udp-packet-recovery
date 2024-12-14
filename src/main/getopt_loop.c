@@ -1,5 +1,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "globals.h"
@@ -19,7 +21,8 @@ void
 getopt_loop (int argc, char *argv[], const char *short_options,
              const struct option *long_options,
              const size_t required_options_size,
-             const char *required_options[required_options_size])
+             const char *required_options[required_options_size],
+             const char *help_messages[])
 {
   size_t required_options_count = 0;
   bool required_option_presence[required_options_size];
@@ -147,6 +150,13 @@ getopt_loop (int argc, char *argv[], const char *short_options,
             str2long (&n_skip_packets, optarg, 10);
             break;
           }
+        case 'h':
+          {
+            print_help (long_options, required_options_size, required_options,
+                        help_messages);
+            exit (0);
+            break;
+          }
         case ':':
           {
             error_exit ("option needs a value\n");
@@ -199,5 +209,69 @@ count_required_option (int opt, const size_t required_options_size,
                 }
             }
         }
+    }
+}
+
+void
+print_help (const struct option *long_options,
+            const size_t required_options_size,
+            const char *required_options[required_options_size],
+            const char *help_messages[])
+{
+  struct option opt;
+
+  printf ("Options:\n");
+
+  for (size_t i = 0;; ++i)
+    {
+      opt = *(long_options++);
+      if (opt.name == 0)
+        {
+          break;
+        }
+      printf ("\t-%c, --%s", (char)opt.val, opt.name);
+      switch (opt.has_arg)
+        {
+        case required_argument:
+          printf (" arg");
+          break;
+        case optional_argument:
+          printf (" [arg]");
+          break;
+        default:
+          break;
+        }
+
+      printf ("\n\t\t");
+
+      for (const char *end = help_messages[i]; (*end) != '\0'; ++end)
+        {
+          if ((*end) == '\n')
+            {
+              printf ("\n\t\t");
+            }
+          else
+            {
+              printf ("%c", (*end));
+            }
+        }
+
+      printf ("\n\n");
+    }
+
+  printf ("Required options:\n");
+
+  for (size_t i = 0; i < required_options_size; ++i)
+    {
+      printf ("\t");
+      for (const char *end = required_options[i]; (*end) != '\0'; ++end)
+        {
+          printf ("-%c", (*end));
+          if ((*(end + 1)) != '\0')
+            {
+              printf (" or ");
+            }
+        }
+      printf (" should be passed\n\n");
     }
 }
