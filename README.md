@@ -1,3 +1,13 @@
+### Build
+
+```sh
+git clone https://github.com/subado/udp-packet-recovery.git
+cd udp-packet-recovery/
+cmake --preset release
+cd build/release
+make
+```
+
 ### Example
 
 Command to run server:
