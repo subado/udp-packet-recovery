@@ -25,9 +25,10 @@ void free_resources (int signal);
 int
 main (int argc, char *argv[])
 {
-#ifdef DEBUG
   setbuf (stdout, NULL);
-#endif
+
+  timespec_get (&start_timespec, TIME_UTC);
+  srand (start_timespec.tv_nsec * getpid ());
 
   init_globals ();
 

@@ -11,7 +11,7 @@ add_executable("${PROJECT_NAME}" "${MAIN_SRC}")
 target_include_directories("${PROJECT_NAME}" PRIVATE "${MAIN_INC}")
 set_property(TARGET "${PROJECT_NAME}" PROPERTY C_STANDARD 23)
 
-if("${CMAKE_BUILD_TYPE}" EQUAL "Debug")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   target_compile_definitions("${PROJECT_NAME}" PRIVATE DEBUG)
 endif()
 
